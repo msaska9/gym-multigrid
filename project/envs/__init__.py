@@ -1,0 +1,1 @@
+from project.envs.collect_game_1_team import CollectGame1Team3Agents10x10

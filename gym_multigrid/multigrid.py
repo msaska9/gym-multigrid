@@ -423,6 +423,9 @@ class Agent(WorldObj):
             else:
                 return (world.OBJECT_TO_IDX[self.type], world.COLOR_TO_IDX[self.color], 0, 0, self.dir, 0)
 
+
+
+
     @property
     def dir_vec(self):
         """
@@ -890,7 +893,7 @@ class MultiGridEnv(gym.Env):
             see_through_walls=False,
             seed=2,
             agents=None,
-            partial_obs=True,
+            partial_obs=False,
             agent_view_size=7,
             actions_set=Actions,
             objects_set = World
@@ -974,7 +977,7 @@ class MultiGridEnv(gym.Env):
         if self.partial_obs:
             obs = self.gen_obs()
         else:
-            obs = [self.grid.encode_for_agents(self.agents[i].pos) for i in range(len(self.agents))]
+            obs = [self.grid.encode_for_agents(self.objects, self.agents[i].pos) for i in range(len(self.agents))]
         obs=[self.objects.normalize_obs*ob for ob in obs]
         return obs
 
@@ -1315,7 +1318,7 @@ class MultiGridEnv(gym.Env):
         if self.partial_obs:
             obs = self.gen_obs()
         else:
-            obs = [self.grid.encode_for_agents(self.agents[i].pos) for i in range(len(actions))]
+            obs = [self.grid.encode_for_agents(self.objects, self.agents[i].pos) for i in range(len(actions))]
 
         obs=[self.objects.normalize_obs*ob for ob in obs]
 
