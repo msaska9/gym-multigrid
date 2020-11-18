@@ -1,5 +1,4 @@
 from gym_multigrid.envs.collect_game import CollectGameEnv
-from project.agents.agent import Agent
 import numpy as np
 
 
@@ -24,12 +23,16 @@ class CollectGame1Team(CollectGameEnv):
         self.last_observations = None
         self.last_rewards = None
         self.agent_players = agent_players
+        self.num_balls = num_balls
 
     def step(self, actions):
         obs, rewards, done, info = super().step(actions)
         obs = np.array(obs)
 
         agent_positions = []
+
+        # row 0 gives the object type
+        # row 5 gives self / other agent
 
         extracted_obs = obs[:, :, :, [0, 5]]
 
@@ -55,10 +58,10 @@ class CollectGame1Team(CollectGameEnv):
         self.last_rewards = [0] * len(self.agent_players)
 
 
-class CollectGame1Team3Agents10x10(CollectGame1Team):
-    def __init__(self, agent_players):
+class CollectGame1Team10x10(CollectGame1Team):
+    def __init__(self, agent_players, number_of_balls):
         super().__init__(size=10,
-                         num_balls=[10],
+                         num_balls=[number_of_balls],
                          agents_index=[0]*len(agent_players),
                          balls_index=[0],
                          balls_reward=[1],

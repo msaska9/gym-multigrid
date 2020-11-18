@@ -37,7 +37,8 @@ class CollectGameEnv(MultiGridEnv):
             # Set this to True for maximum speed
             see_through_walls=False,
             agents=agents,
-            agent_view_size=view_size
+            agent_view_size=view_size,
+            num_balls_max=num_balls[0]
         )
 
 

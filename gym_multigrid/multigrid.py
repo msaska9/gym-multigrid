@@ -896,7 +896,8 @@ class MultiGridEnv(gym.Env):
             partial_obs=False,
             agent_view_size=7,
             actions_set=Actions,
-            objects_set = World
+            objects_set = World,
+            num_balls_max = 0
     ):
         self.agents = agents
 
@@ -916,6 +917,8 @@ class MultiGridEnv(gym.Env):
         self.action_space = spaces.Discrete(len(self.actions.available))
 
         self.objects=objects_set
+
+        self.num_balls_max = num_balls_max
 
         if partial_obs:
             self.observation_space = spaces.Box(
@@ -1315,10 +1318,23 @@ class MultiGridEnv(gym.Env):
         if self.step_count >= self.max_steps:
             done = True
 
+        # counting the number of remaining balls
+        balls_remaining = 0
+        for x in range(self.grid.width):
+            for y in range(self.grid.height):
+                v = self.grid.get(x, y)
+                if v is not None:
+                    if v.encode(self.objects)[0] == 6:
+                        balls_remaining += 1
+        # keeping the number of balls at num_balls_max every time
+        while balls_remaining < self.num_balls_max:
+            self.place_obj(Ball(self.world, 0, 1))
+            balls_remaining += 1
+
         if self.partial_obs:
             obs = self.gen_obs()
         else:
-            obs = [self.grid.encode_for_agents(self.objects, self.agents[i].pos) for i in range(len(actions))]
+            obs = [self.grid.encode_for_agents(self.world, self.agents[i].pos) for i in range(len(actions))]
 
         obs=[self.objects.normalize_obs*ob for ob in obs]
 
