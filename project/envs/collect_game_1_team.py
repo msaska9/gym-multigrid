@@ -14,12 +14,17 @@ class CollectGame1Team(CollectGameEnv):
     ):
         self.agent_players = []
         self.num_agents = len(agents_index)
+
+        agent_types = [agent.agent_type for agent in agent_players]
+
         super().__init__(
             size=size,
             num_balls=num_balls,
             agents_index=agents_index,
             balls_index=balls_index,
-            balls_reward=balls_reward)
+            balls_reward=balls_reward,
+            agent_types=agent_types
+        )
         self.last_observations = None
         self.last_rewards = None
         self.agent_players = agent_players

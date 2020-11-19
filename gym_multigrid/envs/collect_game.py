@@ -15,7 +15,8 @@ class CollectGameEnv(MultiGridEnv):
         balls_index=[],
         balls_reward=[],
         zero_sum = False,
-        view_size=7
+        view_size=7,
+        agent_types=[]
 
     ):
         self.num_balls = num_balls
@@ -26,8 +27,8 @@ class CollectGameEnv(MultiGridEnv):
         self.world = World
 
         agents = []
-        for i in agents_index:
-            agents.append(Agent(self.world, i, view_size=view_size))
+        for index, i in enumerate(agents_index):
+            agents.append(Agent(self.world, i, view_size=view_size, agent_type=agent_types[index]))
 
         super().__init__(
             grid_size=size,

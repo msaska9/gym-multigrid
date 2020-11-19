@@ -6,10 +6,11 @@ from gym_multigrid.multigrid import Actions
 
 
 class Agent:
-    def __init__(self, agent_id):
+    def __init__(self, agent_id, agent_type=0):
         self.id = agent_id
         self.total_reward = 0
         self.action_probabilities = [0.1, 0.2, 0.2, 0.4, 0.1]
+        self.agent_type = agent_type
 
     def next_action(self, observation, reward):
         pass
@@ -44,18 +45,19 @@ pickup = 4
 
 class RandomAgent(Agent):
     def __init__(self, agent_id):
-        super().__init__(agent_id)
+        super().__init__(agent_id, agent_type=1)
 
     def start_simulation(self, observation):
         """ Nothing to be done """
 
     def next_action(self, observation, reward):
+        #print("random index: ", self.id, " type: ", self.agent_type)
         return self.random_action()
 
 
 class GreedyAgent(Agent):
     def __init__(self, agent_id):
-        super(GreedyAgent, self).__init__(agent_id)
+        super().__init__(agent_id, agent_type=2)
         self.observation = None
         self.width = 0
         self.height = 0
@@ -82,6 +84,8 @@ class GreedyAgent(Agent):
 
     def next_action(self, observation, reward):
         self.observation = observation
+        x, y = self.get_my_position()
+        #print("greedy index: ", self.id, " type: ", x, " ", y)
         return self.greedy_action()
 
 

@@ -21,6 +21,13 @@ COLORS = {
     'grey': np.array([100, 100, 100])
 }
 
+AGENT_COLORS = {
+    0: np.array([255, 0, 0]),
+    1: np.array([0, 0, 255]),
+    2: np.array([112, 39, 195]),
+    3: np.array([255, 255, 0])
+}
+
 COLOR_NAMES = sorted(list(COLORS.keys()))
 
 class World:
@@ -383,7 +390,7 @@ class Box(WorldObj):
 
 
 class Agent(WorldObj):
-    def __init__(self, world, index=0, view_size=7):
+    def __init__(self, world, index=0, view_size=7, agent_type=0):
         super(Agent, self).__init__(world, 'agent', world.IDX_TO_COLOR[index])
         self.pos = None
         self.dir = None
@@ -393,9 +400,11 @@ class Agent(WorldObj):
         self.terminated = False
         self.started = True
         self.paused = False
+        self.agent_type = agent_type
 
     def render(self, img):
-        c = COLORS[self.color]
+        # c = COLORS[self.color]
+        c = AGENT_COLORS[self.agent_type]
         tri_fn = point_in_triangle(
             (0.12, 0.19),
             (0.87, 0.50),
@@ -653,6 +662,10 @@ class Grid:
 
         key = (*highlights, tile_size)
         key = obj.encode(world) + key if obj else key
+
+        # different type of agents have different colours
+        if isinstance(obj, Agent):
+            key = (obj.agent_type, key)
 
         if key in cls.tile_cache:
             return cls.tile_cache[key]
