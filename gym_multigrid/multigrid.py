@@ -355,7 +355,7 @@ class Ball(WorldObj):
         return True
 
     def render(self, img):
-        fill_coords(img, point_in_circle(0.5, 0.5, 0.31), COLORS[self.color])
+        fill_coords(img, point_in_circle(0.5, 0.5, 0.31), COLORS["green"])
 
 
 class Box(WorldObj):
