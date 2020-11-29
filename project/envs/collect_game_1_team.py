@@ -10,10 +10,13 @@ class CollectGame1Team(CollectGameEnv):
             agents_index=[],
             balls_index=[],
             balls_reward=[],
-            agent_players=[]
+            agent_players=[],
+            total_num_rounds=10
     ):
         self.agent_players = []
         self.num_agents = len(agents_index)
+        self.round_id = 0
+        self.total_num_rounds = total_num_rounds
 
         agent_types = [agent.agent_type for agent in agent_players]
 
@@ -37,26 +40,35 @@ class CollectGame1Team(CollectGameEnv):
     def start_simulation(self):
         observation = self.reset()
         for agent_index, agent in enumerate(self.agent_players):
-            agent.start_simulation(observation[agent_index])
+            agent.start_simulation(observation[agent_index], self.total_num_rounds)
 
     def simulate_round(self):
-        actions = []
-        for agent_index, agent in enumerate(self.agent_players):
-            obs = self.last_observations[agent_index]
-            reward = self.last_rewards[agent_index]
-            actions.append(agent.next_action(obs, reward))
-        self.last_observations, self.last_rewards, done, info = self.step(actions)
+        if self.round_id > self.total_num_rounds:
+            for agent_index, agent in enumerate(self.agent_players):
+                obs = self.last_observations[agent_index]
+                reward = self.last_rewards[agent_index]
+                agent.end_simulation(obs, reward, self.round_id)
+            self.start_simulation()
+        else:
+            actions = []
+            for agent_index, agent in enumerate(self.agent_players):
+                obs = self.last_observations[agent_index]
+                reward = self.last_rewards[agent_index]
+                actions.append(agent.next_action(obs, reward, self.round_id))
+            self.last_observations, self.last_rewards, done, info = self.step(actions)
+            self.round_id += 1
 
     def reset(self):
         obs = super().reset()
         self.last_observations = extract_observation(obs)
         self.last_rewards = [0] * len(self.agent_players)
-        return obs
+        self.round_id = 0
+        return self.last_observations
 
 
 class CollectGame1Team10x10(CollectGame1Team):
     def __init__(self, agent_players, number_of_balls):
-        super().__init__(size=10,
+        super().__init__(size=4,
                          num_balls=[number_of_balls],
                          agents_index=[0] * len(agent_players),
                          balls_index=[0],

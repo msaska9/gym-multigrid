@@ -11,11 +11,15 @@ class Agent:
         self.total_reward = 0
         self.action_probabilities = [0.1, 0.2, 0.2, 0.4, 0.1]
         self.agent_type = agent_type
+        self.observation = None
 
-    def next_action(self, observation, reward):
+    def next_action(self, observation, reward, round_id):
         pass
 
-    def start_simulation(self, observation):
+    def start_simulation(self, observation, rounds):
+        pass
+
+    def end_simulation(self, observation, reward, round_id):
         pass
 
     def random_action(self):
@@ -31,6 +35,17 @@ class Agent:
                     return x, y
         return -1, -1
 
+    def get_all_ball_positions(self):
+        width = len(self.observation)
+        height = len(self.observation[0])
+        positions_x = []
+        positions_y = []
+        for x in range(width):
+            for y in range(height):
+                if self.observation[x][y][0] == World.OBJECT_TO_IDX["ball"]:
+                    positions_x.append(x)
+                    positions_y.append(y)
+        return positions_x, positions_y
 
 """
 actions:
@@ -47,18 +62,20 @@ class RandomAgent(Agent):
     def __init__(self, agent_id):
         super().__init__(agent_id, agent_type=1)
 
-    def start_simulation(self, observation):
+    def start_simulation(self, observation, rounds):
         """ Nothing to be done """
 
-    def next_action(self, observation, reward):
+    def next_action(self, observation, reward, round_id):
         #print("random index: ", self.id, " type: ", self.agent_type)
         return self.random_action()
+
+    def end_simulation(self, observation, reward, round_id):
+        """ Nothing to be done """
 
 
 class GreedyAgent(Agent):
     def __init__(self, agent_id):
         super().__init__(agent_id, agent_type=2)
-        self.observation = None
         self.width = 0
         self.height = 0
 
@@ -78,15 +95,18 @@ class GreedyAgent(Agent):
         target_ball_position = random.choice(target_ball_positions)
         return move_towards_ball(pos_x, pos_y, direction, target_ball_position[0], target_ball_position[1])
 
-    def start_simulation(self, observation):
+    def start_simulation(self, observation, rounds):
         self.width = len(observation)
         self.height = len(observation[0])
 
-    def next_action(self, observation, reward):
+    def next_action(self, observation, reward, round_id):
         self.observation = observation
         x, y = self.get_my_position()
         #print("greedy index: ", self.id, " type: ", x, " ", y)
         return self.greedy_action()
+
+    def end_simulation(self, observation, reward, round_id):
+        """ Nothing to be done """
 
 
 def sign(x):
