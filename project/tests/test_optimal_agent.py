@@ -23,6 +23,6 @@ if __name__ == '__main__':
     nb_agents = len(env.agents)
 
     while True:
-        env.render(mode='human', highlight=False)
-        time.sleep(0.01)
+        env.render(mode='no-human', highlight=False)
+        time.sleep(0.000001)
         env.simulate_round()

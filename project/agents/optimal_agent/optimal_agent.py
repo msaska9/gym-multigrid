@@ -30,6 +30,8 @@ class OptimalAgent(Agent):
         direction = obs[pos_x][pos_y][1]
 
         features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], round_id])
+        # features = np.array([round_id])
+
         #print(features)
         return features
 
@@ -38,15 +40,18 @@ class OptimalAgent(Agent):
         self.master_agent.init_networks(len(observation))
 
     def next_action(self, observation, reward, round_id):
+
+        reward = 1.0
+
         observation = self.process_observation(observation, round_id)
         if not (self.last_observation is None):
             self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation)
         self.last_observation = observation
         self.last_action = self.master_agent.act_epsilon_greedy(self.last_observation)
 
-        if reward > 0:
-            print(self.rounds, ".round: ", reward)
-        elif self.rounds % 100 == 0:
+        """if reward > 0:
+            print(self.rounds, ".round: ", reward)"""
+        if self.rounds % 100 == 0:
             print("r# ", self.rounds)
         self.rounds += 1
         return self.last_action

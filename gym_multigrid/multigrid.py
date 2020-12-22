@@ -1417,6 +1417,9 @@ class MultiGridEnv(gym.Env):
         Render the whole-grid human view
         """
 
+        if mode != 'human':
+            return
+
         if close:
             if self.window:
                 self.window.close()

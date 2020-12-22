@@ -2,7 +2,7 @@ import random
 
 
 class ReplayBuffer:
-    def __init__(self, capacity=100):
+    def __init__(self, capacity=80):
         self._capacity = capacity
         self._buffer = []
         self._position = 0
@@ -27,6 +27,10 @@ class ReplayBuffer:
             rewards.append(reward)
             next_states.append(next_state)
             dones.append(done)
+
+        #print("BUFFER RETURNS: ")
+        #print("states: ", states)
+        #print("next_states: ", next_states)
         return states, actions, rewards, next_states, dones
 
     def get_size(self):
