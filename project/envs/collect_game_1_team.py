@@ -1,6 +1,8 @@
 from gym_multigrid.envs.collect_game import CollectGameEnv
 import numpy as np
 
+training = True
+
 
 class CollectGame1Team(CollectGameEnv):
     def __init__(
@@ -40,6 +42,7 @@ class CollectGame1Team(CollectGameEnv):
     def start_simulation(self):
         observation = self.reset()
         for agent_index, agent in enumerate(self.agent_players):
+            agent.set_training(training)
             agent.start_simulation(observation[agent_index], self.total_num_rounds)
 
     def simulate_round(self):
@@ -64,6 +67,11 @@ class CollectGame1Team(CollectGameEnv):
         self.last_rewards = [0] * len(self.agent_players)
         self.round_id = 0
         return self.last_observations
+
+    def terminate(self):
+        if training:
+            for agent in self.agent_players:
+                agent.save_models()
 
 
 class CollectGame1Team10x10(CollectGame1Team):

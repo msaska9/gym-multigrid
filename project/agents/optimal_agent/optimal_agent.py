@@ -38,16 +38,21 @@ class OptimalAgent(Agent):
     def start_simulation(self, observation, rounds):
         observation = self.process_observation(observation, rounds)
         self.master_agent.init_networks(len(observation))
+        if not self.is_training:
+            self.master_agent.load_model()
 
     def next_action(self, observation, reward, round_id):
 
         reward = 1.0
 
         observation = self.process_observation(observation, round_id)
-        if not (self.last_observation is None):
+        if not (self.last_observation is None) and self.is_training:
             self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation)
         self.last_observation = observation
-        self.last_action = self.master_agent.act_epsilon_greedy(self.last_observation)
+        if self.is_training:
+            self.last_action = self.master_agent.act_epsilon_greedy(self.last_observation)
+        else:
+            self.last_action = self.master_agent.act(self.last_observation)
 
         """if reward > 0:
             print(self.rounds, ".round: ", reward)"""
@@ -61,3 +66,6 @@ class OptimalAgent(Agent):
         self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation, done=1)
         self.last_observation = None
         self.last_action = None
+
+    def save_models(self):
+        self.master_agent.save_model()

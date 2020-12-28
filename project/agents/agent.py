@@ -12,6 +12,7 @@ class Agent:
         self.action_probabilities = [0.1, 0.2, 0.2, 0.4, 0.1]
         self.agent_type = agent_type
         self.observation = None
+        self.is_training = True
 
     def next_action(self, observation, reward, round_id):
         pass
@@ -20,6 +21,9 @@ class Agent:
         pass
 
     def end_simulation(self, observation, reward, round_id):
+        pass
+
+    def save_models(self):
         pass
 
     def random_action(self):
@@ -46,6 +50,9 @@ class Agent:
                     positions_x.append(x)
                     positions_y.append(y)
         return positions_x, positions_y
+
+    def set_training(self, is_training):
+        self.is_training = is_training
 
 """
 actions:

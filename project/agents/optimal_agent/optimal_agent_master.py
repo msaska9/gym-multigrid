@@ -18,6 +18,8 @@ class OptimalAgentMaster:
         self.gamma = 0.9
         self.epsilon = 1
         self.networks_initialised = False
+        self.model_saved = False
+        self.model_loaded = False
 
         self.greedy_step_cnt = 0
         self.losses = []
@@ -30,6 +32,28 @@ class OptimalAgentMaster:
             self.optimizer = optim.RMSprop(self.model.parameters(), lr=1e-2)
             self.criterion = torch.nn.MSELoss()
             self.networks_initialised = True
+
+    def save_model(self):
+        if not self.model_saved:
+            print("saving model...")
+            torch.save(self.model.state_dict(), "trained_model.txt")
+            self.model_saved = True
+
+    def load_model(self):
+        if not self.model_loaded:
+            print("loading model...")
+            self.model = DQN(self.input_size)
+            self.model.load_state_dict(torch.load("trained_model.txt"))
+            self.model.eval()
+            self.model_loaded = True
+
+    def act(self, state):
+        state = torch.tensor(state).type(torch.IntTensor)
+        q_all_values = self.model.forward(state)
+        print("state: ", state)
+        print("vals: ", q_all_values)
+        best_action = q_all_values.max(0)[1].item()
+        return best_action
 
     def act_epsilon_greedy(self, state, epsilon=0.8):
         if random.uniform(0, 1) <= epsilon:
@@ -48,6 +72,7 @@ class OptimalAgentMaster:
             return best_action
 
     def improve_network(self):
+        print("improve")
         states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
 
         states = torch.tensor(states).type(torch.LongTensor)
@@ -95,7 +120,9 @@ class OptimalAgentMaster:
         self.optimizer.zero_grad()
         loss.backward()
         self.losses.append(loss.item())
-        # print("last loss: ", self.losses[-1])
+
+        print("last loss: ", self.losses[-1])
+
         """for p in self.model.parameters():
             p.grad.data.clamp_(-1, 1)"""
         self.optimizer.step()

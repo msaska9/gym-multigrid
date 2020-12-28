@@ -22,7 +22,8 @@ if __name__ == '__main__':
     env.start_simulation()
     nb_agents = len(env.agents)
 
-    while True:
+    for i in range(10000):
         env.render(mode='no-human', highlight=False)
-        time.sleep(0.000001)
+        time.sleep(0.0001)
         env.simulate_round()
+    env.terminate()
