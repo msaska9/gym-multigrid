@@ -1,9 +1,6 @@
 from gym_multigrid.envs.collect_game import CollectGameEnv
 import numpy as np
 
-training = True
-
-
 class CollectGame1Team(CollectGameEnv):
     def __init__(
             self,
@@ -13,12 +10,14 @@ class CollectGame1Team(CollectGameEnv):
             balls_index=[],
             balls_reward=[],
             agent_players=[],
-            total_num_rounds=10
+            total_num_rounds=10,
+            is_training=True
     ):
         self.agent_players = []
         self.num_agents = len(agents_index)
         self.round_id = 0
         self.total_num_rounds = total_num_rounds
+        self.is_training = is_training
 
         agent_types = [agent.agent_type for agent in agent_players]
 
@@ -42,7 +41,7 @@ class CollectGame1Team(CollectGameEnv):
     def start_simulation(self):
         observation = self.reset()
         for agent_index, agent in enumerate(self.agent_players):
-            agent.set_training(training)
+            agent.set_training(self.is_training)
             agent.start_simulation(observation[agent_index], self.total_num_rounds)
 
     def simulate_round(self):
@@ -69,19 +68,20 @@ class CollectGame1Team(CollectGameEnv):
         return self.last_observations
 
     def terminate(self):
-        if training:
+        if self.is_training:
             for agent in self.agent_players:
                 agent.save_models()
 
 
 class CollectGame1Team10x10(CollectGame1Team):
-    def __init__(self, agent_players, number_of_balls):
+    def __init__(self, agent_players, number_of_balls, is_training):
         super().__init__(size=4,
                          num_balls=[number_of_balls],
                          agents_index=[0] * len(agent_players),
                          balls_index=[0],
                          balls_reward=[1],
-                         agent_players=agent_players)
+                         agent_players=agent_players,
+                         is_training=is_training)
 
 
 def extract_observation(obs):

@@ -6,6 +6,8 @@ from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
+training = False
+
 if __name__ == '__main__':
     register(
         id='multigrid-collect-1-team-v0',
@@ -18,12 +20,15 @@ if __name__ == '__main__':
     for i in range(1):
         agents.append(OptimalAgent(i, optimal_agent_master))
 
-    env = gym.envs.make('multigrid-collect-1-team-v0', agent_players=agents, number_of_balls=1)
+    env = gym.envs.make('multigrid-collect-1-team-v0', agent_players=agents, number_of_balls=1, is_training=training)
     env.start_simulation()
     nb_agents = len(env.agents)
 
-    for i in range(10000):
-        env.render(mode='no-human', highlight=False)
-        time.sleep(0.0001)
+    visual_mode = 'no-human' if training else 'human'
+    clock_speed = 0.001 if training else 0.5
+
+    for i in range(20000):
+        env.render(mode=visual_mode, highlight=False)
+        time.sleep(clock_speed)
         env.simulate_round()
     env.terminate()

@@ -3,6 +3,8 @@ import time
 from gym.envs.registration import register
 from project.agents.agent import RandomAgent
 from project.agents.agent import GreedyAgent
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 if __name__ == '__main__':
     register(

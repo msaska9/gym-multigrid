@@ -11,16 +11,19 @@ class OptimalAgent(Agent):
         self.rounds = 0
 
     def process_observation(self, obs, round_id):
-        """
+
         self.observation = obs
-        pos_x, pos_y = self.get_my_position()
-        obs = obs[:, :, [0, 1]]
+        # pos_x, pos_y = self.get_my_position()
+        # obs = obs[:, :, [0, 1]]
         obs = obs.flatten()
-        obs = np.append(obs, pos_x)
-        obs = np.append(obs, pos_y)
+        # obs = np.append(obs, pos_x)
+        # obs = np.append(obs, pos_y)
         obs = np.append(obs, round_id)
+
+        print("obs: ", obs)
+
         return obs
-        """
+
 
         #testing with easy features
 
@@ -30,9 +33,10 @@ class OptimalAgent(Agent):
         direction = obs[pos_x][pos_y][1]
 
         features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], round_id])
-        # features = np.array([round_id])
+
 
         #print(features)
+        print("observation:", self.observation)
         return features
 
     def start_simulation(self, observation, rounds):
@@ -43,7 +47,7 @@ class OptimalAgent(Agent):
 
     def next_action(self, observation, reward, round_id):
 
-        reward = 1.0
+        # reward = 1.0
 
         observation = self.process_observation(observation, round_id)
         if not (self.last_observation is None) and self.is_training:

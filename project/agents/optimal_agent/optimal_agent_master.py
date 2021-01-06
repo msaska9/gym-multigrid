@@ -14,7 +14,7 @@ class OptimalAgentMaster:
         self.replay_buffer = ReplayBuffer()
         self.optimizer = None
         self.criterion = None
-        self.batch_size = 40
+        self.batch_size = 100
         self.gamma = 0.9
         self.epsilon = 1
         self.networks_initialised = False
@@ -27,9 +27,8 @@ class OptimalAgentMaster:
     def init_networks(self, input_size):
         if not self.networks_initialised:
             self.input_size = input_size
-            # self.model = Q_learning(input_size, [150, 150], self.num_actions, hidden_unit)
             self.model = DQN(input_size)
-            self.optimizer = optim.RMSprop(self.model.parameters(), lr=1e-2)
+            self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
             self.criterion = torch.nn.MSELoss()
             self.networks_initialised = True
 
@@ -55,7 +54,7 @@ class OptimalAgentMaster:
         best_action = q_all_values.max(0)[1].item()
         return best_action
 
-    def act_epsilon_greedy(self, state, epsilon=0.8):
+    def act_epsilon_greedy(self, state, epsilon=0.1):
         if random.uniform(0, 1) <= epsilon:
             action = random.choices(np.arange(self.num_actions), weights=[0.1, 0.2, 0.2, 0.4, 0.1], k=1)[0]
             return action

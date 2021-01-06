@@ -8,11 +8,13 @@ class DQN(nn.Module):
         self.input_size = input_size
         self.num_actions = num_actions
         self.network = nn.Sequential(
-            nn.Linear(input_size, 50),
+            nn.Linear(input_size, 100),
             nn.ReLU(),
-            nn.Linear(50, 50),
+            nn.Linear(100, 100),
             nn.ReLU(),
-            nn.Linear(50, self.num_actions)
+            nn.Linear(100, 100),
+            nn.ReLU(),
+            nn.Linear(100, self.num_actions)
         )
 
     def forward(self, x):
