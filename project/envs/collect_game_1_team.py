@@ -75,7 +75,7 @@ class CollectGame1Team(CollectGameEnv):
 
 class CollectGame1Team10x10(CollectGame1Team):
     def __init__(self, agent_players, number_of_balls, is_training):
-        super().__init__(size=4,
+        super().__init__(size=8,
                          num_balls=[number_of_balls],
                          agents_index=[0] * len(agent_players),
                          balls_index=[0],

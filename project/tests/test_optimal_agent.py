@@ -3,6 +3,7 @@ import time
 from gym.envs.registration import register
 from project.agents.optimal_agent.optimal_agent import OptimalAgent
 from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
+import sys
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
@@ -13,6 +14,9 @@ if __name__ == '__main__':
         id='multigrid-collect-1-team-v0',
         entry_point='project.envs:CollectGame1Team10x10'
     )
+
+    if len(sys.argv) > 1:
+        training = True if sys.argv[1] == 'train' else False
 
     optimal_agent_master = OptimalAgentMaster()
 
@@ -27,7 +31,7 @@ if __name__ == '__main__':
     visual_mode = 'no-human' if training else 'human'
     clock_speed = 0.001 if training else 0.5
 
-    for i in range(20000):
+    for i in range(100):
         env.render(mode=visual_mode, highlight=False)
         time.sleep(clock_speed)
         env.simulate_round()
