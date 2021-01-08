@@ -14,7 +14,7 @@ class OptimalAgentMaster:
         self.replay_buffer = ReplayBuffer()
         self.optimizer = None
         self.criterion = None
-        self.batch_size = 100
+        self.batch_size = 200
         self.gamma = 0.9
         self.epsilon = 1
         self.networks_initialised = False
@@ -28,7 +28,7 @@ class OptimalAgentMaster:
         if not self.networks_initialised:
             self.input_size = input_size
             self.model = DQN(input_size)
-            self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
+            self.optimizer = optim.Adam(self.model.parameters(), lr=1e-4)
             self.criterion = torch.nn.MSELoss()
             self.networks_initialised = True
 

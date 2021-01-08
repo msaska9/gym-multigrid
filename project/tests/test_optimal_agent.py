@@ -24,14 +24,14 @@ if __name__ == '__main__':
     for i in range(1):
         agents.append(OptimalAgent(i, optimal_agent_master))
 
-    env = gym.envs.make('multigrid-collect-1-team-v0', agent_players=agents, number_of_balls=1, is_training=training)
+    env = gym.envs.make('multigrid-collect-1-team-v0', agent_players=agents, number_of_balls=2, is_training=training)
     env.start_simulation()
     nb_agents = len(env.agents)
 
     visual_mode = 'no-human' if training else 'human'
     clock_speed = 0.001 if training else 0.5
 
-    for i in range(100):
+    for i in range(20000):
         env.render(mode=visual_mode, highlight=False)
         time.sleep(clock_speed)
         env.simulate_round()
