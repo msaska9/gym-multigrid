@@ -39,6 +39,18 @@ class Agent:
                     return x, y
         return -1, -1
 
+    def get_other_agent_positions(self):
+        width = len(self.observation)
+        height = len(self.observation[0])
+        positions_x = []
+        positions_y = []
+        for x in range(width):
+            for y in range(height):
+                if self.observation[x][y][0] == World.OBJECT_TO_IDX["agent"] and self.observation[x][y][2] != self.id:
+                    positions_x.append(x);
+                    positions_y.append(y);
+        return positions_x, positions_y
+
     def get_all_ball_positions(self):
         width = len(self.observation)
         height = len(self.observation[0])

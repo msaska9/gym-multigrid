@@ -7,8 +7,9 @@ import random
 import numpy as np
 
 class OptimalAgentMaster:
-    def __init__(self, num_actions=5):
+    def __init__(self, trained_model_filename='trained_model.txt', num_actions=5):
         self.num_actions = num_actions
+        self.trained_model_filename = trained_model_filename
         self.input_size = 0
         self.model = None
         self.replay_buffer = ReplayBuffer()
@@ -35,22 +36,22 @@ class OptimalAgentMaster:
     def save_model(self):
         if not self.model_saved:
             print("saving model...")
-            torch.save(self.model.state_dict(), "trained_model.txt")
+            torch.save(self.model.state_dict(), self.trained_model_filename)
             self.model_saved = True
 
     def load_model(self):
         if not self.model_loaded:
             print("loading model...")
             self.model = DQN(self.input_size)
-            self.model.load_state_dict(torch.load("trained_model.txt"))
+            self.model.load_state_dict(torch.load(self.trained_model_filename))
             self.model.eval()
             self.model_loaded = True
 
     def act(self, state):
         state = torch.tensor(state).type(torch.IntTensor)
         q_all_values = self.model.forward(state)
-        print("state: ", state)
-        print("vals: ", q_all_values)
+        # print("state: ", state)
+        # print("vals: ", q_all_values)
         best_action = q_all_values.max(0)[1].item()
         return best_action
 

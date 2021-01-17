@@ -13,7 +13,7 @@ class OptimalAgent(Agent):
     def process_observation(self, obs, round_id):
 
         self.observation = obs
-        # pos_x, pos_y = self.get_my_position()
+        """"# pos_x, pos_y = self.get_my_position()
         # obs = obs[:, :, [0, 1]]
         obs = obs.flatten()
         # obs = np.append(obs, pos_x)
@@ -22,7 +22,7 @@ class OptimalAgent(Agent):
 
         print("obs: ", obs)
 
-        return obs
+        return obs"""
 
 
         #testing with easy features
@@ -30,13 +30,21 @@ class OptimalAgent(Agent):
         self.observation = obs
         pos_x, pos_y = self.get_my_position()
         balls_x, balls_y = self.get_all_ball_positions()
+        agents_x, agents_y = self.get_other_agent_positions()
         direction = obs[pos_x][pos_y][1]
 
-        features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], round_id])
+        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], round_id])
+
+        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0]])
+
+        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], balls_x[1], balls_y[1], round_id])
+
+        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], balls_x[1], balls_y[1]])
+
+        features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], agents_x[0], agents_y[0]])
 
 
         #print(features)
-        print("observation:", self.observation)
         return features
 
     def start_simulation(self, observation, rounds):
@@ -67,7 +75,8 @@ class OptimalAgent(Agent):
 
     def end_simulation(self, observation, reward, round_id):
         observation = self.process_observation(observation, round_id)
-        self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation, done=1)
+        if not (self.last_observation is None) and self.is_training:
+            self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation, done=1)
         self.last_observation = None
         self.last_action = None
 

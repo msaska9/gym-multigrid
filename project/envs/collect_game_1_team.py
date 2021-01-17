@@ -1,5 +1,8 @@
 from gym_multigrid.envs.collect_game import CollectGameEnv
 import numpy as np
+import random
+from numpy import random
+
 
 class CollectGame1Team(CollectGameEnv):
     def __init__(
@@ -18,6 +21,7 @@ class CollectGame1Team(CollectGameEnv):
         self.round_id = 0
         self.total_num_rounds = total_num_rounds
         self.is_training = is_training
+        self.termination_probability = 0.05
 
         agent_types = [agent.agent_type for agent in agent_players]
 
@@ -45,7 +49,16 @@ class CollectGame1Team(CollectGameEnv):
             agent.start_simulation(observation[agent_index], self.total_num_rounds)
 
     def simulate_round(self):
-        if self.round_id > self.total_num_rounds:
+
+        """if self.round_id > self.total_num_rounds:
+                    for agent_index, agent in enumerate(self.agent_players):
+                        obs = self.last_observations[agent_index]
+                        reward = self.last_rewards[agent_index]
+                        agent.end_simulation(obs, reward, self.round_id)
+                    self.start_simulation()"""
+
+        if random.rand() <= self.termination_probability:
+            # print("round ended, ", self.round_id)
             for agent_index, agent in enumerate(self.agent_players):
                 obs = self.last_observations[agent_index]
                 reward = self.last_rewards[agent_index]
@@ -72,10 +85,13 @@ class CollectGame1Team(CollectGameEnv):
             for agent in self.agent_players:
                 agent.save_models()
 
+    def get_rewards(self):
+        return np.array(self.last_rewards)
+
 
 class CollectGame1Team10x10(CollectGame1Team):
     def __init__(self, agent_players, number_of_balls, is_training):
-        super().__init__(size=5,
+        super().__init__(size=6,
                          num_balls=[number_of_balls],
                          agents_index=[0] * len(agent_players),
                          balls_index=[0],
