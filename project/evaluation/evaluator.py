@@ -20,7 +20,7 @@ agent type can be:
 """
 agent_type = 'optimal'
 model_filename = 'trained_model_2_agents_6_size.txt'
-simulation_steps = 1000
+simulation_steps = 500
 
 
 if __name__ == '__main__':

@@ -2,7 +2,13 @@ from gym_multigrid.envs.collect_game import CollectGameEnv
 import numpy as np
 import random
 from numpy import random
+from random import seed
 
+# for deterministic random
+random.seed(42)
+
+new_episode_random_generator = np.random.RandomState()
+new_episode_random_generator.seed(1)
 
 class CollectGame1Team(CollectGameEnv):
     def __init__(
@@ -57,7 +63,8 @@ class CollectGame1Team(CollectGameEnv):
                         agent.end_simulation(obs, reward, self.round_id)
                     self.start_simulation()"""
 
-        if random.rand() <= self.termination_probability:
+        random_num = random.random()
+        if random_num <= self.termination_probability:
             # print("round ended, ", self.round_id)
             for agent_index, agent in enumerate(self.agent_players):
                 obs = self.last_observations[agent_index]
@@ -74,6 +81,8 @@ class CollectGame1Team(CollectGameEnv):
             self.round_id += 1
 
     def reset(self):
+        super().seed(new_episode_random_generator.randint(0, 1000))
+        print("new episode")
         obs = super().reset()
         self.last_observations = extract_observation(obs)
         self.last_rewards = [0] * len(self.agent_players)

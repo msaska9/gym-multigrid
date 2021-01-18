@@ -4,6 +4,8 @@ from gym_multigrid.multigrid import World
 from gym_multigrid.multigrid import DIR_TO_VEC
 from gym_multigrid.multigrid import Actions
 
+random.seed(42)
+
 
 class Agent:
     def __init__(self, agent_id, agent_type=0):
