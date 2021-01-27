@@ -7,6 +7,8 @@ from gym.utils import seeding
 from .rendering import *
 from .window import Window
 import numpy as np
+from datetime import datetime
+import time
 
 # Size in pixels of a tile in the full-scale human view
 TILE_PIXELS = 32
@@ -25,7 +27,9 @@ AGENT_COLORS = {
     0: np.array([255, 0, 0]),
     1: np.array([0, 0, 255]),
     2: np.array([112, 39, 195]),
-    3: np.array([255, 255, 0])
+    3: np.array([255, 255, 0]),
+    4: np.array([255, 255, 255]),
+    5: np.array([255, 165, 0])
 }
 
 COLOR_NAMES = sorted(list(COLORS.keys()))
@@ -965,7 +969,10 @@ class MultiGridEnv(gym.Env):
         self.see_through_walls = see_through_walls
 
         # Initialize the RNG
-        self.seed(seed=seed)
+        # self.seed(seed=seed)
+
+        # Initialize the RNG based on time
+        self.seed(seed=int(round(time.time() * 1000)))
 
         # Initialize the state
         self.reset()

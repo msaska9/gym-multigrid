@@ -1,10 +1,12 @@
 from ..agent import Agent
 import numpy as np
+from project.agents.agent import distance_from_ball
+from gym_multigrid.multigrid import Actions
 
 
-class OptimalAgent(Agent):
+class RobustAgent(Agent):
     def __init__(self, agent_id, master_agent):
-        super().__init__(agent_id, agent_type=3)
+        super().__init__(agent_id, agent_type=0)
         self.last_observation = None
         self.last_action = None
         self.master_agent = master_agent
@@ -13,41 +15,17 @@ class OptimalAgent(Agent):
     def process_observation(self, obs, round_id):
 
         self.observation = obs
-        """"# pos_x, pos_y = self.get_my_position()
-        # obs = obs[:, :, [0, 1]]
-        obs = obs.flatten()
-        # obs = np.append(obs, pos_x)
-        # obs = np.append(obs, pos_y)
-        obs = np.append(obs, round_id)
 
-        print("obs: ", obs)
-
-        return obs"""
-
-
-        #testing with easy features
-
-        self.observation = obs
         pos_x, pos_y = self.get_my_position()
         balls_x, balls_y = self.get_all_ball_positions()
         agents_x, agents_y = self.get_other_agent_positions()
         direction = obs[pos_x][pos_y][1]
         direction_other = obs[agents_x[0]][agents_y[0]][1]
 
-        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], round_id])
-
-        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0]])
-
-        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], balls_x[1], balls_y[1], round_id])
-
-        # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], balls_x[1], balls_y[1]])
-
         # features = np.array([pos_x, pos_y, direction, balls_x[0], balls_y[0], agents_x[0], agents_y[0]])
 
         features = np.array([pos_x, pos_y, direction, agents_x[0], agents_y[0], direction_other, balls_x[0], balls_y[0]])
 
-
-        #print(features)
         return features
 
     def start_simulation(self, observation, rounds):
@@ -60,6 +38,18 @@ class OptimalAgent(Agent):
 
         # reward = 1.0
 
+        pos_x, pos_y = self.get_my_position()
+        balls_x, balls_y = self.get_all_ball_positions()
+        direction = self.observation[pos_x][pos_y][1]
+        if reward == 1.0:
+            if self.last_action == Actions.pickup and \
+                    distance_from_ball(pos_x, pos_y, direction, balls_x[0], balls_y[0]) == 1:
+                reward = 1.0
+            else:
+                # other agent picked up the ball
+                # print("other agent picked the ball")
+                reward = 0.5
+
         observation = self.process_observation(observation, round_id)
         if not (self.last_observation is None) and self.is_training:
             self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation)
@@ -71,8 +61,8 @@ class OptimalAgent(Agent):
 
         """if reward > 0:
             print(self.rounds, ".round: ", reward)"""
-        if self.rounds % 100 == 0:
-            print("r# ", self.rounds)
+        """if self.rounds % 100 == 0:
+            print("r# ", self.rounds)"""
         self.rounds += 1
         return self.last_action
 

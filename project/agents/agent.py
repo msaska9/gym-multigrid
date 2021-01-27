@@ -4,7 +4,7 @@ from gym_multigrid.multigrid import World
 from gym_multigrid.multigrid import DIR_TO_VEC
 from gym_multigrid.multigrid import Actions
 
-random.seed(42)
+# random.seed(42)
 
 
 class Agent:
@@ -22,7 +22,7 @@ class Agent:
     def start_simulation(self, observation, rounds):
         pass
 
-    def end_simulation(self, observation, reward, round_id):
+    def end_simulation(self, observation, reward, round_id, learn_from=True):
         pass
 
     def save_models(self):
@@ -90,7 +90,7 @@ class RandomAgent(Agent):
         #print("random index: ", self.id, " type: ", self.agent_type)
         return self.random_action()
 
-    def end_simulation(self, observation, reward, round_id):
+    def end_simulation(self, observation, reward, round_id, learn_from=True):
         """ Nothing to be done """
 
 
@@ -126,7 +126,7 @@ class GreedyAgent(Agent):
         #print("greedy index: ", self.id, " type: ", x, " ", y)
         return self.greedy_action()
 
-    def end_simulation(self, observation, reward, round_id):
+    def end_simulation(self, observation, reward, round_id, learn_from=True):
         """ Nothing to be done """
 
 

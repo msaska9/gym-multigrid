@@ -11,7 +11,7 @@ from random import seed
 # new_episode_random_generator.seed(1)
 
 
-class CollectGame1Team(CollectGameEnv):
+class CollectGame1TeamNoTermination(CollectGameEnv):
     def __init__(
             self,
             size=10,
@@ -20,7 +20,7 @@ class CollectGame1Team(CollectGameEnv):
             balls_index=[],
             balls_reward=[],
             agent_players=[],
-            total_num_rounds=10,
+            total_num_rounds=20,
             is_training=True
     ):
         self.agent_players = []
@@ -28,7 +28,6 @@ class CollectGame1Team(CollectGameEnv):
         self.round_id = 0
         self.total_num_rounds = total_num_rounds
         self.is_training = is_training
-        self.termination_probability = 0.05
 
         agent_types = [agent.agent_type for agent in agent_players]
 
@@ -55,6 +54,13 @@ class CollectGame1Team(CollectGameEnv):
             agent.set_training(self.is_training)
             agent.start_simulation(observation[agent_index], self.total_num_rounds)
 
+    def start_new_episode(self):
+        for agent_index, agent in enumerate(self.agent_players):
+            obs = self.last_observations[agent_index]
+            reward = self.last_rewards[agent_index]
+            agent.end_simulation(obs, reward, self.round_id, learn_from=False)
+        self.start_simulation()
+
     def simulate_round(self):
 
         """if self.round_id > self.total_num_rounds:
@@ -63,15 +69,8 @@ class CollectGame1Team(CollectGameEnv):
                         reward = self.last_rewards[agent_index]
                         agent.end_simulation(obs, reward, self.round_id)
                     self.start_simulation()"""
-
-        random_num = random.random()
-        if random_num <= self.termination_probability:
-            # print("round ended, ", self.round_id)
-            for agent_index, agent in enumerate(self.agent_players):
-                obs = self.last_observations[agent_index]
-                reward = self.last_rewards[agent_index]
-                agent.end_simulation(obs, reward, self.round_id)
-            self.start_simulation()
+        if self.round_id == self.total_num_rounds:
+            self.start_new_episode()
         else:
             actions = []
             for agent_index, agent in enumerate(self.agent_players):
@@ -99,7 +98,7 @@ class CollectGame1Team(CollectGameEnv):
         return np.array(self.last_rewards)
 
 
-class CollectGame1Team10x10(CollectGame1Team):
+class CollectGame1Team6x6NoTermination(CollectGame1TeamNoTermination):
     def __init__(self, agent_players, number_of_balls, is_training):
         super().__init__(size=6,
                          num_balls=[number_of_balls],
