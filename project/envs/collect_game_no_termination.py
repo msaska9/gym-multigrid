@@ -20,7 +20,7 @@ class CollectGame1TeamNoTermination(CollectGameEnv):
             balls_index=[],
             balls_reward=[],
             agent_players=[],
-            total_num_rounds=20,
+            total_num_rounds=50,
             is_training=True
     ):
         self.agent_players = []

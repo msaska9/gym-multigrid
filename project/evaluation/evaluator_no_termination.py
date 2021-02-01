@@ -4,6 +4,8 @@ from gym.envs.registration import register
 from project.agents.optimal_agent.optimal_agent import OptimalAgent
 from project.agents.optimal_agent.robust_agent import RobustAgent
 from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
+from project.agents.optimal_agent.full_control_agent_master import FullControlAgentMaster
+from project.agents.optimal_agent.full_control_agent import FullControlAgent
 from project.agents.agent import RandomAgent
 from project.agents.agent import GreedyAgent
 from project.agents.human_control_agent import HumanAgent
@@ -19,18 +21,21 @@ agent type can be:
 'greedy'
 'optimal'
 'robust'
+'full_control'
 'human'
 """
 
 # agent_type = 'optimal'
-agent_types = ['human', 'human']
+agent_types = ['optimal', 'optimal']
 optimal_model_filename = 'trained_optimal_long.txt'
 robust_model_filename = 'trained_robust_no_termination.txt'
+full_control_model_filename = 'trained_full_control_long.txt'
 episodes = 50
 episode_length = 20
 
 optimal_agent_master = None
 robust_agent_master = None
+full_control_agent_master = None
 
 
 if __name__ == '__main__':
@@ -54,6 +59,10 @@ if __name__ == '__main__':
             if robust_agent_master is None:
                 robust_agent_master = OptimalAgentMaster(trained_model_filename=robust_model_filename)
             agents.append(RobustAgent(i, robust_agent_master))
+        elif agent_type == 'full_control':
+            if full_control_agent_master is None:
+                full_control_agent_master = FullControlAgentMaster(trained_model_filename=full_control_model_filename)
+            agents.append(FullControlAgent(i, full_control_agent_master))
         elif agent_type == 'human':
             agents.append(HumanAgent(i))
 
@@ -61,7 +70,7 @@ if __name__ == '__main__':
     env.start_simulation()
 
     visual_mode = 'human' if visual else 'no-human'
-    clock_speed = 0.2 if visual else 0.001
+    clock_speed = 1.0 if visual else 0.001
 
     rewards = []
 

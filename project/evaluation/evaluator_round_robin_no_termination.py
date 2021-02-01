@@ -4,6 +4,8 @@ from gym.envs.registration import register
 from project.agents.optimal_agent.optimal_agent import OptimalAgent
 from project.agents.optimal_agent.robust_agent import RobustAgent
 from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
+from project.agents.optimal_agent.full_control_agent_master import FullControlAgentMaster
+from project.agents.optimal_agent.full_control_agent import FullControlAgent
 from project.agents.agent import RandomAgent
 from project.agents.agent import GreedyAgent
 import numpy as np
@@ -24,15 +26,19 @@ agent type can be:
 'greedy'
 'optimal'
 'robust'
+'full_control'
 """
 
-all_agent_types = ['random', 'greedy', 'optimal', 'robust']
+# all_agent_types = ['random', 'greedy', 'optimal', 'robust']
+all_agent_types = ['full_control']
 optimal_model_filename = 'trained_optimal_long.txt'
 robust_model_filename = 'trained_robust_long.txt'
+full_control_model_filename = 'trained_full_control_long.txt'
 simulation_steps = 2000
 
 optimal_agent_master = OptimalAgentMaster(trained_model_filename=optimal_model_filename)
 robust_agent_master = OptimalAgentMaster(trained_model_filename=robust_model_filename)
+full_control_agent_master = FullControlAgentMaster(trained_model_filename=full_control_model_filename)
 
 
 def add_agent(agent_list, new_agent_type, agent_id):
@@ -44,6 +50,8 @@ def add_agent(agent_list, new_agent_type, agent_id):
         agents.append(OptimalAgent(agent_id, optimal_agent_master))
     elif new_agent_type == 'robust':
         agents.append(RobustAgent(agent_id, robust_agent_master))
+    elif new_agent_type == 'full_control':
+        agents.append(FullControlAgent(agent_id, full_control_agent_master))
 
 
 def plot_results(res):
