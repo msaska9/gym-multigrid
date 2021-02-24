@@ -13,7 +13,7 @@ import numpy as np
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-visual = True
+visual = False
 
 """
 agent type can be:
@@ -26,7 +26,7 @@ agent type can be:
 """
 
 # agent_type = 'optimal'
-agent_types = ['optimal', 'optimal']
+agent_types = ['random', 'random']
 optimal_model_filename = 'trained_optimal_long.txt'
 robust_model_filename = 'trained_robust_no_termination.txt'
 full_control_model_filename = 'trained_full_control_long.txt'

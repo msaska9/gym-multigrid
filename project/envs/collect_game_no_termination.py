@@ -1,5 +1,6 @@
 from gym_multigrid.envs.collect_game import CollectGameEnv
 import numpy as np
+import time
 import random
 from numpy import random
 from random import seed
@@ -110,6 +111,7 @@ class CollectGame1Team6x6NoTermination(CollectGame1TeamNoTermination):
 
 
 def extract_observation(obs):
+
     obs = np.array(obs)
 
     agent_positions = []
