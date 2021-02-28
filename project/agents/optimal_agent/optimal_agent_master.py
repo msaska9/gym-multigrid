@@ -15,12 +15,15 @@ class OptimalAgentMaster:
         self.replay_buffer = ReplayBuffer()
         self.optimizer = None
         self.criterion = None
-        self.batch_size = 200
+        self.batch_size = 32
         self.gamma = 0.9
         self.epsilon = 1
         self.networks_initialised = False
         self.model_saved = False
         self.model_loaded = False
+
+        self.update_frequency = 4
+        self.steps_since_update = 0
 
         self.greedy_step_cnt = 0
         self.losses = []
@@ -72,7 +75,15 @@ class OptimalAgentMaster:
             return best_action
 
     def improve_network(self):
-        print("improve")
+
+        self.steps_since_update += 1
+        if self.steps_since_update % self.update_frequency != 0:
+            # no need to update
+            return
+
+        self.steps_since_update = 0
+
+        # print("improve")
         states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
 
         states = torch.tensor(states).type(torch.LongTensor)
@@ -88,8 +99,8 @@ class OptimalAgentMaster:
 
         with torch.no_grad():
             next_q_state_values = self.model(next_states)
-            print(".........next_states", next_states[0])
-            print("--------- values", next_q_state_values[0])
+            # print(".........next_states", next_states[0])
+            # print("--------- values", next_q_state_values[0])
 
         #print("next_q_state_values: ", next_q_state_values)
         max_q = next_q_state_values.max(1)[0]
@@ -121,7 +132,7 @@ class OptimalAgentMaster:
         loss.backward()
         self.losses.append(loss.item())
 
-        print("last loss: ", self.losses[-1])
+        # print("last loss: ", self.losses[-1])
 
         """for p in self.model.parameters():
             p.grad.data.clamp_(-1, 1)"""

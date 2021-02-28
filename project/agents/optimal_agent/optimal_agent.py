@@ -3,8 +3,8 @@ import numpy as np
 
 
 class OptimalAgent(Agent):
-    def __init__(self, agent_id, master_agent):
-        super().__init__(agent_id, agent_type=3)
+    def __init__(self, agent_id, master_agent, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=3, env_type=env_type)
         self.last_observation = None
         self.last_action = None
         self.master_agent = master_agent
@@ -12,7 +12,14 @@ class OptimalAgent(Agent):
 
     def process_observation(self, obs, round_id):
 
+
+
+
         self.observation = obs
+
+        if self.env_type == "my-multigrid":
+            return np.array(obs[1] + obs[2])
+
         """"# pos_x, pos_y = self.get_my_position()
         # obs = obs[:, :, [0, 1]]
         obs = obs.flatten()

@@ -8,11 +8,12 @@ from gym_multigrid.multigrid import Actions
 
 
 class Agent:
-    def __init__(self, agent_id, agent_type=0):
+    def __init__(self, agent_id, agent_type=0, env_type="gym-multigrid"):
         self.id = agent_id
         self.total_reward = 0
         self.action_probabilities = [0.1, 0.2, 0.2, 0.4, 0.1]
         self.agent_type = agent_type
+        self.env_type = env_type
         self.observation = None
         self.is_training = True
 
@@ -103,8 +104,8 @@ pickup = 4
 
 
 class RandomAgent(Agent):
-    def __init__(self, agent_id):
-        super().__init__(agent_id, agent_type=1)
+    def __init__(self, agent_id, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=1, env_type=env_type)
 
     def start_simulation(self, observation, rounds):
         """ Nothing to be done """
@@ -118,8 +119,8 @@ class RandomAgent(Agent):
 
 
 class GreedyAgent(Agent):
-    def __init__(self, agent_id):
-        super().__init__(agent_id, agent_type=2)
+    def __init__(self, agent_id, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=2, env_type=env_type)
         self.width = 0
         self.height = 0
 
@@ -132,20 +133,28 @@ class GreedyAgent(Agent):
         return positions
 
     def greedy_action(self):
-        pos_x, pos_y = self.get_my_position()
-        direction = self.observation[pos_x][pos_y][1]
-        ball_positions = self.get_ball_positions()
+        if self.env_type == "gym-multigrid":
+            pos_x, pos_y = self.get_my_position()
+            direction = self.observation[pos_x][pos_y][1]
+            ball_positions = self.get_ball_positions()
+        else:
+            pos_x, pos_y = self.observation[1][0], self.observation[1][1]
+            direction = self.observation[1][2]
+            ball_positions = [[self.observation[2][0], self.observation[2][1]]]
         target_ball_positions = get_closest_balls(pos_x, pos_y, direction, ball_positions)
         target_ball_position = random.choice(target_ball_positions)
         return move_towards_ball(pos_x, pos_y, direction, target_ball_position[0], target_ball_position[1])
 
     def start_simulation(self, observation, rounds):
-        self.width = len(observation)
-        self.height = len(observation[0])
+        if self.env_type == "gym-multigrid":
+            self.width = len(observation)
+            self.height = len(observation[0])
+        else:
+            self.width = observation[0][0]
+            self.height = observation[0][1]
 
     def next_action(self, observation, reward, round_id):
         self.observation = observation
-        x, y = self.get_my_position()
         #print("greedy index: ", self.id, " type: ", x, " ", y)
         return self.greedy_action()
 

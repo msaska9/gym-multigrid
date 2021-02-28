@@ -1,5 +1,7 @@
 import random
 import numpy as np
+from gym_multigrid.window import Window
+from .rendering import *
 
 
 class Actions:
@@ -47,6 +49,7 @@ class MyMultiGrid:
         self.round_id = 0
         self.total_num_rounds = 50
         self.last_rewards = []
+        self.window = None
 
     def step_with_agent(self, idx, action):
         if action == Actions.still:
@@ -115,10 +118,11 @@ class MyMultiGrid:
             agent.start_simulation(obs, self.total_num_rounds)
 
     def start_new_episode(self):
+        reward_sum = np.sum(self.last_rewards)
         for agent in self.agent_players:
             obs = self.generate_observation(agent.id)
-            reward = self.last_rewards[agent.id]
-            agent.end_simulation(obs, reward, self.round_id, learn_from=False)
+            # reward = self.last_rewards[agent.id]
+            agent.end_simulation(obs, reward_sum, self.round_id, learn_from=False)
         self.start_simulation()
 
     def simulate_round(self):
@@ -126,11 +130,14 @@ class MyMultiGrid:
             self.start_new_episode()
         else:
             actions = []
+            reward_sum = np.sum(self.last_rewards)
             for agent in self.agent_players:
                 obs = self.generate_observation(agent.id)
-                reward = self.last_rewards[agent.id]
-                actions.append(agent.next_action(obs, reward, self.round_id))
+                # reward = self.last_rewards[agent.id]
+                actions.append(agent.next_action(obs, reward_sum, self.round_id))
+            # print("myenv actions: ", actions)
             self.last_rewards = self.step(actions)
+            # print("new state: ", self.board)
             self.round_id += 1
 
     def terminate(self):
@@ -143,12 +150,12 @@ class MyMultiGrid:
 
     def get_random_empty_cell(self):
 
-        x = random.randint(0, self.size)
-        y = random.randint(0, self.size)
+        x = random.randint(0, self.size-1)
+        y = random.randint(0, self.size-1)
 
         while self.board[x][y] != CellType.empty:
-            x = random.randint(0, self.size)
-            y = random.randint(0, self.size)
+            x = random.randint(0, self.size-1)
+            y = random.randint(0, self.size-1)
 
         return x, y
 
@@ -168,18 +175,28 @@ class MyMultiGrid:
         self.ball_positions.pop(ball_index)
 
     def generate_observation(self, agent_idx):
-        obs = [self.agent_positions[agent_idx][0],
+        sizes = [self.size, self.size]
+        ball_positions = []
+        agent_positions = [self.agent_positions[agent_idx][0],
                self.agent_positions[agent_idx][1],
                self.agent_directions[agent_idx]]
         for i in range(len(self.agent_players)):
             if i != agent_idx:
-                obs.append(self.agent_positions[i][0])
-                obs.append(self.agent_positions[i][1])
-                obs.append(self.agent_directions[i])
+                agent_positions.append(self.agent_positions[i][0])
+                agent_positions.append(self.agent_positions[i][1])
+                agent_positions.append(self.agent_directions[i])
         for ball_pos in self.ball_positions:
-            obs.append(ball_pos[0])
-            obs.append(ball_pos[1])
-        return np.array(obs)
+            ball_positions.append(ball_pos[0])
+            ball_positions.append(ball_pos[1])
+        return np.array([sizes, agent_positions, ball_positions])
+
+    def render(self):
+
+        if not self.window:
+            self.window = Window('Multigrid')
+            self.window.show(block=False)
+        img = render_multigrid_as_img(self)
+        self.window.show_img(img)
 
 
 def init_board(n, m):

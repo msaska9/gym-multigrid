@@ -3,8 +3,8 @@ import numpy as np
 
 
 class FullControlAgent(Agent):
-    def __init__(self, agent_id, master_agent):
-        super().__init__(agent_id, agent_type=5)
+    def __init__(self, agent_id, master_agent, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=5, env_type=env_type)
         self.last_observation = None
         self.last_action = None
         self.master_agent = master_agent
@@ -13,6 +13,10 @@ class FullControlAgent(Agent):
     def process_observation(self, obs, round_id):
 
         self.observation = obs
+
+        if self.env_type == "my-multigrid":
+            return np.array(obs[1] + obs[2])
+
         balls_x, balls_y = self.get_all_ball_positions()
         agents_x, agents_y = self.get_all_agent_positions()
         direction_0 = obs[agents_x[0]][agents_y[0]][1]

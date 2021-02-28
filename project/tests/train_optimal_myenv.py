@@ -1,8 +1,7 @@
-import gym
 import time
-from gym.envs.registration import register
 from project.agents.optimal_agent.optimal_agent import OptimalAgent
 from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
+from project.my_envs.mymultigrid import MyMultiGrid
 import sys
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
@@ -10,10 +9,6 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 training = True
 
 if __name__ == '__main__':
-    register(
-        id='multigrid-collect-1-team-v1',
-        entry_point='project.envs:CollectGame1Team6x6NoTermination'
-    )
 
     if len(sys.argv) > 1:
         training = True if sys.argv[1] == 'train' else False
@@ -22,24 +17,20 @@ if __name__ == '__main__':
 
     agents = []
     for i in range(2):
-        agents.append(OptimalAgent(i, optimal_agent_master))
+        agents.append(OptimalAgent(i, optimal_agent_master, env_type="my-multigrid"))
 
-    env = gym.envs.make('multigrid-collect-1-team-v1', agent_players=agents, number_of_balls=1, is_training=training)
+    env = MyMultiGrid(size=6, num_balls=1, agent_players=agents, is_training=training)
     env.start_simulation()
-    nb_agents = len(env.agents)
 
     visual_mode = 'no-human' if training else 'human'
-    clock_speed = 0.001 if training else 0.5
 
     time_0 = time.time()
 
-    for i in range(1000000):
+    for i in range(2000000):
         if i % 1000 == 0:
             print("training #", i)
             time_1 = time.time()
             print("seconds for 1000 steps: ", time_1 - time_0)
             time_0 = time_1
-        env.render(mode=visual_mode, highlight=False)
-        time.sleep(clock_speed)
         env.simulate_round()
     env.terminate()

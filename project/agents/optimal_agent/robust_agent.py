@@ -5,8 +5,8 @@ from gym_multigrid.multigrid import Actions
 
 
 class RobustAgent(Agent):
-    def __init__(self, agent_id, master_agent):
-        super().__init__(agent_id, agent_type=0)
+    def __init__(self, agent_id, master_agent, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=0, env_type=env_type)
         self.last_observation = None
         self.last_action = None
         self.master_agent = master_agent
@@ -15,6 +15,9 @@ class RobustAgent(Agent):
     def process_observation(self, obs, round_id):
 
         self.observation = obs
+
+        if self.env_type == "my-multigrid":
+            return np.array(obs[1] + obs[2])
 
         pos_x, pos_y = self.get_my_position()
         balls_x, balls_y = self.get_all_ball_positions()
@@ -36,14 +39,23 @@ class RobustAgent(Agent):
 
     def next_action(self, observation, reward, round_id):
 
-        # reward = 1.0
+        pos_x, pos_y = 0, 0
+        direction = 0
+        ball_x, ball_y = 0, 0
 
-        pos_x, pos_y = self.get_my_position()
-        balls_x, balls_y = self.get_all_ball_positions()
-        direction = self.observation[pos_x][pos_y][1]
+        if self.env_type == "gym-multigrid":
+            pos_x, pos_y = self.get_my_position()
+            direction = self.observation[pos_x][pos_y][1]
+            balls_x, balls_y = self.get_all_ball_positions()
+            ball_x, ball_y = balls_x[0], balls_y[0]
+        else:
+            pos_x, pos_y = self.observation[1][0], self.observation[1][1]
+            direction = self.observation[1][2]
+            ball_x, ball_y = self.observation[2][0], self.observation[2][1]
+
         if reward == 1.0:
             if self.last_action == Actions.pickup and \
-                    distance_from_ball(pos_x, pos_y, direction, balls_x[0], balls_y[0]) == 1:
+                    distance_from_ball(pos_x, pos_y, direction, ball_x, ball_y) == 1:
                 reward = 1.0
             else:
                 # other agent picked up the ball

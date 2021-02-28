@@ -57,8 +57,8 @@ def ask_for_human_move():
 
 
 class HumanAgent(Agent):
-    def __init__(self, agent_id, colour=4):
-        super().__init__(agent_id, agent_type=colour)
+    def __init__(self, agent_id, colour=4, env_type="gym-multigrid"):
+        super().__init__(agent_id, agent_type=colour, env_type=env_type)
         root.deiconify()
 
     def start_simulation(self, observation, rounds):
