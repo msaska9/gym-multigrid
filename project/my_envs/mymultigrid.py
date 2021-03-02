@@ -107,8 +107,10 @@ class MyMultiGrid:
         self.round_id = 0
         self.last_rewards = [0] * len(self.agent_players)
 
-    def render(self, mode='human'):
-        print("board: ", self.board)
+    def print_cell_types(self):
+        print("cell types:")
+        for row in self.board:
+            print(row)
 
     def start_simulation(self):
         self.reset()
@@ -150,12 +152,12 @@ class MyMultiGrid:
 
     def get_random_empty_cell(self):
 
-        x = random.randint(0, self.size-1)
-        y = random.randint(0, self.size-1)
+        x = random.randint(0, self.size - 1)
+        y = random.randint(0, self.size - 1)
 
         while self.board[x][y] != CellType.empty:
-            x = random.randint(0, self.size-1)
-            y = random.randint(0, self.size-1)
+            x = random.randint(0, self.size - 1)
+            y = random.randint(0, self.size - 1)
 
         return x, y
 
@@ -169,7 +171,7 @@ class MyMultiGrid:
     def remove_ball(self, x, y):
         ball_index = 0
         for i in range(len(self.ball_positions)):
-            if self.ball_positions[0] == x and self.ball_positions[1] == y:
+            if self.ball_positions[i][0] == x and self.ball_positions[i][1] == y:
                 ball_index = i
                 break
         self.ball_positions.pop(ball_index)
@@ -178,8 +180,8 @@ class MyMultiGrid:
         sizes = [self.size, self.size]
         ball_positions = []
         agent_positions = [self.agent_positions[agent_idx][0],
-               self.agent_positions[agent_idx][1],
-               self.agent_directions[agent_idx]]
+                           self.agent_positions[agent_idx][1],
+                           self.agent_directions[agent_idx]]
         for i in range(len(self.agent_players)):
             if i != agent_idx:
                 agent_positions.append(self.agent_positions[i][0])

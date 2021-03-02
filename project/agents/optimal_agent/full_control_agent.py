@@ -53,6 +53,8 @@ class FullControlAgent(Agent):
         return self.master_agent.last_action % 5
 
     def end_simulation(self, observation, reward, round_id, learn_from=True):
+        if self.id > 0:
+            return
         observation = self.process_observation(observation, round_id)
         if not (self.last_observation is None) and self.is_training and learn_from:
             self.master_agent.collect_data(self.last_observation, self.last_action, reward, observation, done=1)

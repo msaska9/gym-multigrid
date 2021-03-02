@@ -140,8 +140,14 @@ class GreedyAgent(Agent):
         else:
             pos_x, pos_y = self.observation[1][0], self.observation[1][1]
             direction = self.observation[1][2]
-            ball_positions = [[self.observation[2][0], self.observation[2][1]]]
+            ball_positions = []
+            i = 0
+            while i < len(self.observation[2]):
+                ball_positions.append([self.observation[2][i], self.observation[2][i+1]])
+                i += 2
+            print("observation: ", self.observation[2])
         target_ball_positions = get_closest_balls(pos_x, pos_y, direction, ball_positions)
+        print("target: ", target_ball_positions)
         target_ball_position = random.choice(target_ball_positions)
         return move_towards_ball(pos_x, pos_y, direction, target_ball_position[0], target_ball_position[1])
 

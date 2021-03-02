@@ -1,2 +1,3 @@
 from project.envs.collect_game_1_team import CollectGame1Team10x10
 from project.envs.collect_game_no_termination import CollectGame1Team6x6NoTermination
+from project.envs.collect_game_no_termination import CollectGame1Team8x8NoTermination

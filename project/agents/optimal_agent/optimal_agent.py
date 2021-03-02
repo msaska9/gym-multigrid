@@ -78,8 +78,8 @@ class OptimalAgent(Agent):
 
         """if reward > 0:
             print(self.rounds, ".round: ", reward)"""
-        if self.rounds % 100 == 0:
-            print("r# ", self.rounds)
+        """if self.rounds % 100 == 0:
+            print("r# ", self.rounds)"""
         self.rounds += 1
         return self.last_action
 

@@ -1,11 +1,11 @@
 import gym
 import time
-from gym.envs.registration import register
 from project.agents.optimal_agent.optimal_agent import OptimalAgent
 from project.agents.optimal_agent.robust_agent import RobustAgent
 from project.agents.optimal_agent.optimal_agent_master import OptimalAgentMaster
 from project.agents.optimal_agent.full_control_agent_master import FullControlAgentMaster
 from project.agents.optimal_agent.full_control_agent import FullControlAgent
+from project.my_envs.mymultigrid import MyMultiGrid
 from project.agents.agent import RandomAgent
 from project.agents.agent import GreedyAgent
 import numpy as np
@@ -29,15 +29,15 @@ agent type can be:
 'full_control'
 """
 
-# all_agent_types = ['random', 'greedy', 'optimal', 'robust']
-all_agent_types = ['robust']
+all_agent_types = ['random', 'greedy', 'optimal', 'robust']
+# all_agent_types = ['random, optimal']
 # all_agent_types = ['full_control']
 # optimal_model_filename = 'trained_optimal_long.txt'
-optimal_model_filename = 'trained_optimal_8.txt'
+optimal_model_filename = 'trained_optimal_8_2b.txt'
 # robust_model_filename = 'trained_robust_long.txt'
-robust_model_filename = 'trained_robust_8.txt'
+robust_model_filename = 'trained_robust_8_2b.txt'
 full_control_model_filename = 'trained_full_control_long.txt'
-episodes = 200
+episodes = 10000
 episode_length = 20
 
 optimal_agent_master = OptimalAgentMaster(trained_model_filename=optimal_model_filename)
@@ -47,15 +47,15 @@ full_control_agent_master = FullControlAgentMaster(trained_model_filename=full_c
 
 def add_agent(agent_list, new_agent_type, agent_id):
     if new_agent_type == 'random':
-        agent_list.append(RandomAgent(agent_id))
+        agent_list.append(RandomAgent(agent_id, env_type="my-multigrid"))
     elif new_agent_type == 'greedy':
-        agents.append(GreedyAgent(agent_id))
+        agents.append(GreedyAgent(agent_id, env_type="my-multigrid"))
     elif new_agent_type == 'optimal':
-        agents.append(OptimalAgent(agent_id, optimal_agent_master))
+        agents.append(OptimalAgent(agent_id, optimal_agent_master, env_type="my-multigrid"))
     elif new_agent_type == 'robust':
-        agents.append(RobustAgent(agent_id, robust_agent_master))
+        agents.append(RobustAgent(agent_id, robust_agent_master, env_type="my-multigrid"))
     elif new_agent_type == 'full_control':
-        agents.append(FullControlAgent(agent_id, full_control_agent_master))
+        agents.append(FullControlAgent(agent_id, full_control_agent_master, env_type="my-multigrid"))
 
 
 def plot_results(res):
@@ -80,10 +80,6 @@ def print_result_summary(res):
 
 
 if __name__ == '__main__':
-    register(
-        id='multigrid-collect-1-team-v1',
-        entry_point='project.envs:CollectGame1Team8x8NoTermination'
-    )
 
     n = len(all_agent_types)
     results = [[0.0] * n for i in range(n)]
@@ -98,8 +94,7 @@ if __name__ == '__main__':
             add_agent(agents, agent_0, 0)
             add_agent(agents, agent_1, 1)
 
-            env = gym.envs.make('multigrid-collect-1-team-v1', agent_players=agents, number_of_balls=1,
-                                is_training=False)
+            env = MyMultiGrid(size=8, num_balls=2, agent_players=agents, is_training=False)
             env.start_simulation()
 
             rewards = []
@@ -110,10 +105,11 @@ if __name__ == '__main__':
                 print("Episode # ", episode)
                 reward = 0.0
                 for step in range(episode_length):
-                    env.render(mode=visual_mode, highlight=False)
-                    time.sleep(clock_speed)
+                    if visual:
+                        env.render()
+                        time.sleep(1.0)
                     env.simulate_round()
-                    reward += env.get_rewards()[0]
+                    reward += np.sum(env.get_rewards())
                 print("Episode ended with reward: ", reward)
                 rewards.append(reward)
                 env.start_new_episode()

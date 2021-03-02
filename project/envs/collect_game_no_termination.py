@@ -5,6 +5,7 @@ import random
 from numpy import random
 from random import seed
 
+
 # for deterministic random
 # random.seed(42)
 
@@ -21,7 +22,7 @@ class CollectGame1TeamNoTermination(CollectGameEnv):
             balls_index=[],
             balls_reward=[],
             agent_players=[],
-            total_num_rounds=50,
+            total_num_rounds=20,
             is_training=True
     ):
         self.agent_players = []
@@ -110,8 +111,18 @@ class CollectGame1Team6x6NoTermination(CollectGame1TeamNoTermination):
                          is_training=is_training)
 
 
-def extract_observation(obs):
+class CollectGame1Team8x8NoTermination(CollectGame1TeamNoTermination):
+    def __init__(self, agent_players, number_of_balls, is_training):
+        super().__init__(size=8,
+                         num_balls=[number_of_balls],
+                         agents_index=[0] * len(agent_players),
+                         balls_index=[0],
+                         balls_reward=[1],
+                         agent_players=agent_players,
+                         is_training=is_training)
 
+
+def extract_observation(obs):
     obs = np.array(obs)
 
     agent_positions = []

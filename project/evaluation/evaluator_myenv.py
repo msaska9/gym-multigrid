@@ -12,7 +12,7 @@ import numpy as np
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
-visual = False
+visual = True
 
 """
 agent type can be:
@@ -28,9 +28,13 @@ agent type can be:
 agent_types = ['optimal', 'optimal']
 # optimal_model_filename = 'trained_optimal_long.txt'
 # optimal_model_filename = 'trained_optimal_myenv.txt'
-optimal_model_filename = 'trained_optimal_myenv_fast.txt'
-robust_model_filename = 'trained_robust_no_termination.txt'
-full_control_model_filename = 'trained_full_control_long.txt'
+# optimal_model_filename = 'trained_optimal_myenv.txt'
+# optimal_model_filename = 'trained_optimal_8.txt'
+optimal_model_filename = 'trained_optimal_8_2b.txt'
+# robust_model_filename = 'trained_robust_no_termination.txt'
+robust_model_filename = 'trained_robust_8_2b.txt'
+# full_control_model_filename = 'trained_full_control_long.txt'
+full_control_model_filename = 'trained_full_control_8_long.txt'
 episodes = 50
 episode_length = 20
 
@@ -63,7 +67,7 @@ if __name__ == '__main__':
         elif agent_type == 'human':
             agents.append(HumanAgent(i, env_type="my-multigrid"))
 
-    env = MyMultiGrid(size=6, num_balls=1, agent_players=agents, is_training=False)
+    env = MyMultiGrid(size=8, num_balls=2, agent_players=agents, is_training=False)
     env.start_simulation()
 
 

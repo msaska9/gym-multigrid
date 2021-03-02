@@ -15,14 +15,14 @@ class OptimalAgentMaster:
         self.replay_buffer = ReplayBuffer()
         self.optimizer = None
         self.criterion = None
-        self.batch_size = 32
+        self.batch_size = 64
         self.gamma = 0.9
         self.epsilon = 1
         self.networks_initialised = False
         self.model_saved = False
         self.model_loaded = False
 
-        self.update_frequency = 4
+        self.update_frequency = 16
         self.steps_since_update = 0
 
         self.greedy_step_cnt = 0

@@ -26,9 +26,12 @@ agent type can be:
 """
 
 # agent_type = 'optimal'
-agent_types = ['greedy', 'greedy']
-optimal_model_filename = 'trained_optimal_long.txt'
-robust_model_filename = 'trained_robust_no_termination.txt'
+agent_types = ['optimal', 'optimal']
+# optimal_model_filename = 'trained_optimal_long.txt'
+# optimal_model_filename = 'trained_optimal_myenv_fast.txt'
+optimal_model_filename = 'trained_optimal_8.txt'
+# robust_model_filename = 'trained_robust_no_termination.txt'
+robust_model_filename = 'trained_robust_8.txt'
 full_control_model_filename = 'trained_full_control_long.txt'
 episodes = 50
 episode_length = 20
@@ -41,7 +44,7 @@ full_control_agent_master = None
 if __name__ == '__main__':
     register(
         id='multigrid-collect-1-team-v1',
-        entry_point='project.envs:CollectGame1Team6x6NoTermination'
+        entry_point='project.envs:CollectGame1Team8x8NoTermination'
     )
 
     agents = []
@@ -70,7 +73,7 @@ if __name__ == '__main__':
     env.start_simulation()
 
     visual_mode = 'human' if visual else 'no-human'
-    clock_speed = 1.0 if visual else 0.001
+    clock_speed = 0.2 if visual else 0.001
 
     rewards = []
 
